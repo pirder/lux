@@ -23,7 +23,10 @@ func main() {
 //export cli
 func cli(in *C.char) *C.char {
 	var arg = C.GoString(in)
-	var args = strings.Split(arg, ",")
+	var inputArgs = strings.Split(arg, ",")
+	var args []string
+	args = append(args, "lux")
+	args = append(args, inputArgs...)
 	var errStr = ""
 	if err := app.New().Run(args); err != nil {
 		errStr = fmt.Sprintf(
