@@ -3,6 +3,7 @@ package downloader
 import (
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/fatih/color"
 
@@ -27,7 +28,7 @@ func genSortedStreams(streams map[string]*extractors.Stream) []*extractors.Strea
 	return sortedStreams
 }
 
-func printHeader(data *extractors.Data) {
+func printHeader(data *extractors.Data, output func(result string, err string)) {
 	fmt.Println()
 	cyan.Printf(" Site:      ") // nolint
 	fmt.Println(data.Site)
@@ -35,9 +36,19 @@ func printHeader(data *extractors.Data) {
 	fmt.Println(data.Title)
 	cyan.Printf(" Type:      ") // nolint
 	fmt.Println(data.Type)
+
+	var stringOpt []string
+	stringOpt = append(stringOpt, fmt.Sprintln())
+	stringOpt = append(stringOpt, " Site:      ")
+	stringOpt = append(stringOpt, data.Site)
+	stringOpt = append(stringOpt, " Title:      ")
+	stringOpt = append(stringOpt, data.Title)
+	stringOpt = append(stringOpt, " Type:      ")
+	stringOpt = append(stringOpt, string(data.Type))
+	output(strings.Join(stringOpt, ""), "0")
 }
 
-func printStream(stream *extractors.Stream) {
+func printStream(stream *extractors.Stream, output func(result string, err string)) {
 	blue.Println(fmt.Sprintf("     [%s]  -------------------", stream.ID)) // nolint
 	if stream.Quality != "" {
 		cyan.Printf("     Quality:         ") // nolint
@@ -47,22 +58,42 @@ func printStream(stream *extractors.Stream) {
 	fmt.Printf("%.2f MiB (%d Bytes)\n", float64(stream.Size)/(1024*1024), stream.Size)
 	cyan.Printf("     # download with: ") // nolint
 	fmt.Printf("lux -f %s ...\n\n", stream.ID)
+
+	var stringOpt []string
+	stringOpt = append(stringOpt, fmt.Sprintf("     [%s]  -------------------", stream.ID))
+	if stream.Quality != "" {
+		stringOpt = append(stringOpt, fmt.Sprintf("     Quality:         "))
+		stringOpt = append(stringOpt, fmt.Sprintln(stream.Quality))
+	}
+
+	stringOpt = append(stringOpt, "     Size:            ")
+	stringOpt = append(stringOpt, fmt.Sprintf("%.2f MiB (%d Bytes)\n", float64(stream.Size)/(1024*1024), stream.Size))
+	stringOpt = append(stringOpt, "     # download with: ")
+	stringOpt = append(stringOpt, fmt.Sprintf("lux -f %s ...\n\n", stream.ID))
+	output(strings.Join(stringOpt, ""), "0")
 }
 
-func printInfo(data *extractors.Data, sortedStreams []*extractors.Stream) {
-	printHeader(data)
-
+func printInfo(data *extractors.Data, sortedStreams []*extractors.Stream, output func(result string, err string)) {
+	printHeader(data, output)
 	cyan.Printf(" Streams:   ") // nolint
 	fmt.Println("# All available quality")
+	var stringOpt []string
+	stringOpt = append(stringOpt, " Streams:   ")
+	stringOpt = append(stringOpt, fmt.Sprintln("# All available quality"))
+	output(strings.Join(stringOpt, ""), "0")
 	for _, stream := range sortedStreams {
-		printStream(stream)
+		printStream(stream, output)
 	}
 }
 
-func printStreamInfo(data *extractors.Data, stream *extractors.Stream) {
-	printHeader(data)
+func printStreamInfo(data *extractors.Data, stream *extractors.Stream, output func(result string, err string)) {
+	printHeader(data, output)
 
 	cyan.Printf(" Stream:   ") // nolint
 	fmt.Println()
-	printStream(stream)
+	var stringOpt []string
+	stringOpt = append(stringOpt, " Stream:   ")
+	stringOpt = append(stringOpt, fmt.Sprintln())
+	output(strings.Join(stringOpt, ""), "0")
+	printStream(stream, output)
 }
