@@ -41,8 +41,10 @@ func printHeader(data *extractors.Data, output func(result string, err string)) 
 	stringOpt = append(stringOpt, fmt.Sprintln())
 	stringOpt = append(stringOpt, " Site:      ")
 	stringOpt = append(stringOpt, data.Site)
+	stringOpt = append(stringOpt, fmt.Sprintln())
 	stringOpt = append(stringOpt, " Title:      ")
 	stringOpt = append(stringOpt, data.Title)
+	stringOpt = append(stringOpt, fmt.Sprintln())
 	stringOpt = append(stringOpt, " Type:      ")
 	stringOpt = append(stringOpt, string(data.Type))
 	output(strings.Join(stringOpt, ""), "0")
@@ -62,10 +64,10 @@ func printStream(stream *extractors.Stream, output func(result string, err strin
 	var stringOpt []string
 	stringOpt = append(stringOpt, fmt.Sprintf("     [%s]  -------------------", stream.ID))
 	if stream.Quality != "" {
+		stringOpt = append(stringOpt, fmt.Sprintln())
 		stringOpt = append(stringOpt, fmt.Sprintf("     Quality:         "))
 		stringOpt = append(stringOpt, fmt.Sprintln(stream.Quality))
 	}
-
 	stringOpt = append(stringOpt, "     Size:            ")
 	stringOpt = append(stringOpt, fmt.Sprintf("%.2f MiB (%d Bytes)\n", float64(stream.Size)/(1024*1024), stream.Size))
 	stringOpt = append(stringOpt, "     # download with: ")
@@ -78,8 +80,9 @@ func printInfo(data *extractors.Data, sortedStreams []*extractors.Stream, output
 	cyan.Printf(" Streams:   ") // nolint
 	fmt.Println("# All available quality")
 	var stringOpt []string
+	stringOpt = append(stringOpt, fmt.Sprintln())
 	stringOpt = append(stringOpt, " Streams:   ")
-	stringOpt = append(stringOpt, fmt.Sprintln("# All available quality"))
+	stringOpt = append(stringOpt, fmt.Sprint("# All available quality"))
 	output(strings.Join(stringOpt, ""), "0")
 	for _, stream := range sortedStreams {
 		printStream(stream, output)

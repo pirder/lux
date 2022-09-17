@@ -31,14 +31,14 @@ func cli(in *C.char) *C.char {
 	var args []string
 	args = append(args, "lux")
 	args = append(args, inputArgs...)
-	//var resultStr []string
-	if err := app.New().Run(args); err != nil {
+	var resultStr []string
+	if err := app.NewWithFunc(func(result string, err string) {
+		resultStr = append(resultStr, result)
+	}).Run(args); err != nil {
 		fmt.Sprintf(
 			"Run %s failed: %s\n",
 			color.CyanString("%s", app.Name), color.RedString("%v", err),
 		)
 	}
-	//strings.Join(resultStr, fmt.Sprintln())
-	return C.CString("err")
-
+	return C.CString(strings.Join(resultStr, fmt.Sprintln()))
 }
