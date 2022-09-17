@@ -544,14 +544,14 @@ func (downloader *Downloader) aria2(title string, stream *extractors.Stream) err
 }
 
 // Download download urls
-func (downloader *Downloader) Download(data *extractors.Data) error {
+func (downloader *Downloader) Download(data *extractors.Data, output func(result string, err string)) error {
 	if len(data.Streams) == 0 {
 		return errors.Errorf("no streams in title %s", data.Title)
 	}
 
 	sortedStreams := genSortedStreams(data.Streams)
 	if downloader.option.InfoOnly {
-		printInfo(data, sortedStreams)
+		printInfo(data, sortedStreams, output)
 		return nil
 	}
 
@@ -571,7 +571,7 @@ func (downloader *Downloader) Download(data *extractors.Data) error {
 	}
 
 	if !downloader.option.Silent {
-		printStreamInfo(data, stream)
+		printStreamInfo(data, stream, output)
 	}
 
 	// download caption

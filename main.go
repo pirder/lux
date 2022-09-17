@@ -10,7 +10,10 @@ import (
 )
 
 func main() {
-	if err := app.New().Run(os.Args); err != nil {
+	var resultStr []string
+	if err := app.NewWithFunc(func(result string, err string) {
+		resultStr = append(resultStr, result)
+	}).Run(os.Args); err != nil {
 		fmt.Fprintf(
 			color.Output,
 			"Run %s failed: %s\n",
@@ -18,6 +21,7 @@ func main() {
 		)
 		os.Exit(1)
 	}
+	fmt.Println(resultStr)
 }
 
 //export cli
@@ -27,12 +31,14 @@ func cli(in *C.char) *C.char {
 	var args []string
 	args = append(args, "lux")
 	args = append(args, inputArgs...)
-	var errStr = ""
+	//var resultStr []string
 	if err := app.New().Run(args); err != nil {
-		errStr = fmt.Sprintf(
+		fmt.Sprintf(
 			"Run %s failed: %s\n",
 			color.CyanString("%s", app.Name), color.RedString("%v", err),
 		)
 	}
-	return C.CString(errStr)
+	//strings.Join(resultStr, fmt.Sprintln())
+	return C.CString("err")
+
 }
